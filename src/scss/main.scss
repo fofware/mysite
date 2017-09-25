@@ -1,11 +1,12 @@
+@import 'partials/variables';
 body {
 	margin: 0;
 }
 .algo {
-	color: blue;
+	color: $primary-color;
 }
 .algo-mas{
-	background-color: red;
+	background-color: $secondary-color;
 }
 .mas-algo {
 	display: block;

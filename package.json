@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "gulp watch",
+//    "build": "comando1 && comando2"
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
