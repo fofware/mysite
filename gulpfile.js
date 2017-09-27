@@ -10,9 +10,9 @@ const util = require('util');
 gulp.task( 'sass', () => {
 	return gulp.src('./src/scss/main.scss')
 		.pipe( sourcemaps.init() )
-		.pipe(sass().on('error', sass.logError))
-		.pipe( rename('all-styles.css' ))
-		.pipe(cleanCSS({compatibility: 'ie8'}))
+		.pipe( sass().on('error', sass.logError) )
+		.pipe( rename('all-styles.css'))
+		.pipe( cleanCSS({compatibility: 'ie8'}))
 		.pipe( sourcemaps.write() )
 		.pipe( gulp.dest('./dist/css'));
 });
