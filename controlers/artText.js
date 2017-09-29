@@ -1,9 +1,9 @@
 'use strict'
 const table = require('./db')
-const artMedia = new table({table:'articulosMedia'})
+const artText = new table({table:'articulosText'})
 
 function list(rows, page=1) {
-	return artMedia.qry({rows,page})
+	return artText.qry({rows,page})
 }
 
 module.exports = {
