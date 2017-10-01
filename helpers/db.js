@@ -46,9 +46,14 @@ class table {
 			});
 		});
 	}
+	findById(id){
+		return new Promise( (resolve, reject) => {
+
+		})
+	}
 	qry(params){
 		console.log(params)
-		let strSQL = this.select(params);
+		const strSQL = this.select(params);
 		console.log(strSQL)
 		return new Promise ((resolve,reject) => {
 			this.connect()
@@ -56,7 +61,7 @@ class table {
 				con.query(strSQL, (error, results, fields) => {
 					con.release();
 					if(error) reject({ status:500, message:`Query Error: ${error.sqlMessage}`,data:error});
-					if(!results) reject({ status:404, message: `No se encontraron resultados para el\nQuery: ${strSQL}`})
+					if(!results[0]) reject({ status:404, message: `No se encontraron resultados para el\nQuery: ${strSQL}`})
 					const data = JSON.parse(JSON.stringify(results));
 					resolve({status: 200, message:"Query Exitoso", data: data })
 				});

@@ -1,5 +1,5 @@
 'use strict'
-const table = require('./db')
+const table = require('../helpers/db')
 const artText = new table({table:'articulosText'})
 
 function list(rows, page=1) {

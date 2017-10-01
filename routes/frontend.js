@@ -3,11 +3,12 @@
 const express 		= require('express');
 //const isAuth			= require('../middlewares/auth');
 //const userCtrl 		= require('../controlers/user');
-
+const dirRequire		= require('.././helpers/dir-require');
 const frontend	= express.Router();
 
 frontend.get("/", (req, res) => res.status(200).render('index'));
 frontend.get("/login", (req, res) => res.status(200).render('login'));
+
 /*
 frontend.post("/login", (req, res) => {
 	userCtrl.logIn(req,res)

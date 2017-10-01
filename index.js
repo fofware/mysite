@@ -1,15 +1,16 @@
 'use strict'
 const app		= require('./app');
+const config	= require('./config');
 
 const artMedia	= require('./controlers/artMedia');
 const Media	= require('./controlers/media');
 
 
-app.listen(8088, () => {
-	console.log(`Server corriendo en puerto 8088`);
+app.listen(config._PORT, () => {
+	console.log(`Server corriendo en puerto ${config._PORT}`);
 });
 
-
+/*
 
 artMedia.list(2)
 	.then((response) => {
@@ -42,3 +43,4 @@ Media.list(2, 2002)
 		console.error('--------------------------------')
 		console.error(err)
 	})
+*/
