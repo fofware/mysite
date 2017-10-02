@@ -21,7 +21,7 @@ for (const name in route) {
 // View Engine
 //app.set('views', path.join(__dirname, 'views'));
 app.engine('hbs', hbs({defaultLayout:'default',extname:'hbs'}));
-app.set('view engine', 'handlebars');
+app.set('view engine', 'hbs');
 
 // Set Static Folder
 app.use(express.static(path.join(__dirname, 'public')));
