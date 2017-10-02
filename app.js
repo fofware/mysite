@@ -20,7 +20,7 @@ for (const name in route) {
 }
 // View Engine
 //app.set('views', path.join(__dirname, 'views'));
-app.engine('hbs', hbs({defaultLayout:'default'}));
+app.engine('hbs', hbs({defaultLayout:'default',extname:'hbs'}));
 app.set('view engine', 'handlebars');
 
 // Set Static Folder
