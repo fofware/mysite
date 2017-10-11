@@ -1,7 +1,7 @@
 'use strict'
 const table = require('../helpers/db')
-/*
 const artMedia = new table({table:'articulosMedia'})
+/*
 const artMedia_root = 'artMedia'
 const route = {
 	frontend: {
@@ -30,7 +30,7 @@ function get ( req, res, next ){
 		})
 };
 function list ( req, res, next ) {
-	artMedia.qry({rows:10,page:5})
+	artMedia.qryCount()
 		.then( (respuesta) => {
 			res.status(respuesta.status).send(respuesta);
 		})
@@ -39,6 +39,9 @@ function list ( req, res, next ) {
 		})
 };
 function listpage ( req, res, next ) {
+	artMedia.rows = req.params.rows;
+	artMedia.page = req.params.page;
+//	artMedia.qry({rows:req.params.rows,page:req.params.page})
 	artMedia.qry({rows:req.params.rows,page:req.params.page})
 		.then( (respuesta) => {
 			res.status(respuesta.status).send(respuesta);
@@ -56,8 +59,6 @@ function articulo ( req, res, next ) {
 			res.status(err.status).send(err);
 		})
 };
-
-
 function type ( req, res, next ) {
 	artMedia.qry({where: `\`type\` LIKE '${req.params.artmediaType}%'`})
 	.then( (respuesta) => {

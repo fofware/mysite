@@ -1,8 +1,8 @@
 'use strict'
 const express 		= require('express');
-//const isAuth			= require('../middlewares/auth');
+const isAuth			= require('../middlewares/auth');
 
-const artMediaCtrl	= require( '../../controlers/artMedia');
+const artMediaCtrl	= require( '../controlers/artMedia');
 
 const artMedia	= express.Router();
 artMedia.get('/artMedia', artMediaCtrl.list);

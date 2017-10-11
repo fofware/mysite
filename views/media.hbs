@@ -1,0 +1,80 @@
+<div class="row">
+	<h2>Media</h2>
+	<div>Showing {{data.rowsShow}} registers by page of {{data.tableRowsCount}} registers</div>
+	<div>Current Page {{data.page}}	of {{data.lastPage}} </div>
+</div>
+<div class="row">
+{{#each data.rows as |row ind|}}
+<!--div class="content"-->
+	<div class="col-sm-4 col-md-3">
+		<div class="b-media-content">
+			<div class="b-media-item">
+				<figure class="">
+						{{#if row.image}}
+							{{#if row.data_type}}
+							<a href='/mediadata{{row.data}}'>
+							<img class='img-responsive' src="/mediadata{{row.data}}" alt="{{row.titulo}}" >
+							</a>
+							{{else}}
+							<a href='{{row.data}}'>
+							<img class='img-responsive' src="{{row.data}}" alt="{{row.titulo}}" >
+							</a>
+							{{/if}}
+						{{/if}}
+						{{#if row.video}}
+							<div align="center" class="embed-responsive embed-responsive-{{row.responsiveRatio}}">
+								<a href='/mediadata{{row.data}}'>
+								{{#if row.poster}}
+								<img class='img-responsive' src="/mediadata{{row.poster.[0].data}}" alt="{{row.titulo}}" >
+								{{ else }}
+								<video class="embed-responsive-item" controls preload="none">
+  								<source src="/mediadata{{row.data}}" type="{{row.type}}">
+								</video>
+								{{/if}}
+								</a>
+							</div>
+						{{/if}}
+						{{#if row.youtube}}
+						<div align="center" class="embed-responsive embed-responsive-{{row.responsiveRatio}}">
+							<iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{row.clave}}" frameborder="0" allowfullscreen></iframe>
+						</div>
+						{{/if}}
+					<figcaption>{{row.titulo}}</figcaption>
+				</figure>
+			</div>
+		</div>
+	</div>
+<!--		
+		<div class="col-sm-6">
+	  {{#each row as |childValue childKey|}}
+			<div class="row">
+				<div class="content">
+					<div class="col-sm-3">{{childKey}}:</div>
+					<div class="col-sm-9">{{childValue}}</div>
+				</div>
+			</div>
+		{{/each}}
+		</div>
+-->
+<!--/div-->
+{{/each}}
+	</div>
+
+<br>
+<br>
+<div class="content">
+	<div class="row">
+{{#if data.firstPage}}
+	<a href="/media/page/{{data.firstPage}}">first page</a>
+{{/if}}
+{{#if data.previusPage}}
+	<a href="/media/page/{{data.previusPage}}">previus page</a>
+{{/if}}
+{{#if data.nextPage}}
+	<a href="/media/page/{{data.nextPage}}">next page</a>
+{{/if}}
+{{#if data.lastPage}}
+	<a href="/media/page/{{data.lastPage}}">last page</a>
+{{/if}}
+</div>
+</div>

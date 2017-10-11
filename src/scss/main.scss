@@ -1,7 +1,4 @@
 @import 'partials/variables';
-body {
-	margin: 0;
-}
 .algo {
 	color: $primary-color;
 }
@@ -10,4 +7,17 @@ body {
 }
 .mas-algo {
 	display: block;
+}
+.b-media-content{
+	height: 198px;
+	max-height: 198px;
+	border: 1px solid orange;
+	padding: 2px 2px 2px 2px;
+	margin: 2px 2px 2px 2px;
+}
+.b-media-item{
+	overflow: hidden;
+	height: 100%;
+	width: auto;
+	padding: 2px 2px 2px;
 }

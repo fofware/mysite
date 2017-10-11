@@ -3,6 +3,7 @@ const express 		= require('express');
 const hbs				 	= require('express-handlebars');
 const bodyParser	= require('body-parser');
 const path 				= require('path');
+const app						= express();
 
 //
 // locales
@@ -13,7 +14,6 @@ const path 				= require('path');
 
 const route					= require('./routes');
 
-const app						= express();
 for (const name in route) {
 	console.log(`Adding route ${name}`)
 	app.use( '', route[name] );
