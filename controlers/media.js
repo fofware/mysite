@@ -60,40 +60,42 @@ function findPoster(id) {
 	return poster.qry({where:`\`to\`=${id}`})
 }
 function list ( req, res, next ) {
-	media.qry({ where: "not EXISTS (select * from `poster` where `poster`.`mediaid`=`media`.`id`)", rows:(req.params.rows || media.rows),page:(req.params.page || media.page)})
-		.then( (respuesta) => {
-			try {
-				respuesta.data.rows.map((row, ind) =>{
-//					console.log(row)
-
-					let tp = row.type.split('/')
-					respuesta.data.rows[ind].responsiveRatio = "16by9"
-					if( ( row.width / row.height ) == ( 4 / 3 ) )
-						respuesta.data.rows[ind].responsiveRatio = "4by3"
-					if(tp[0]=='video' && tp[1].indexOf('youtu')>-1){
-							respuesta.data.rows[ind].youtube = 1;
-							respuesta.data.rows[ind].responsiveRatio = "16by9"
-					} else {
-						respuesta.data.rows[ind][tp[0]] = 1;
-					}
-					if( respuesta.data.rows[ind].video || respuesta.data.rows[ind].audio ){
-						findPoster(row.id)
-							.then( (rspta ) => {
-								respuesta.data.rows[ind].poster = rspta.data.rows
-								console.log(respuesta.data.rows[ind])
-//								console.log(rspta.data.rows)
-							})
-							.catch((err) => console.log(err))
-					}
-				});
-				req.respuesta = respuesta;
-//				console.log(respuesta)
-				next()
-			}
-			catch(err){
-				reject({ status:500, message:`Error: ${err}`});
-			}
-//				res.status(respuesta.status).send(respuesta);
+	const obj = {
+		columns:"ps.data as poster, c.*",
+		from: "(SELECT * from media where not EXISTS (select * from `poster` where `poster`.`mediaid`=`media`.`id`)) c",
+		join: "LEFT JOIN poster AS ps ON (ps.order = 0 and ps.to=c.id)",
+		rows:(req.params.rows || media.rows),
+		page:(req.params.page || media.page)
+	}
+//	media.qry({ where: "not EXISTS (select * from `poster` where `poster`.`mediaid`=`media`.`id`)", rows:(req.params.rows || media.rows),page:(req.params.page || media.page)})
+	media.qry(obj)
+	.then( (respuesta) => {
+			respuesta.data.rows.map((row, ind) =>{
+//				console.log(row)
+				let tp = row.type.split('/')
+				respuesta.data.rows[ind].responsiveRatio = "16by9"
+				if( ( row.width / row.height ) == ( 4 / 3 ) )
+					respuesta.data.rows[ind].responsiveRatio = "4by3"
+				if(tp[0]=='video' && tp[1].indexOf('youtu')>-1){
+						respuesta.data.rows[ind].youtube = 1;
+						respuesta.data.rows[ind].responsiveRatio = "16by9"
+				} else {
+					respuesta.data.rows[ind][tp[0]] = 1;
+				}
+				if( respuesta.data.rows[ind].video || respuesta.data.rows[ind].audio ){
+					console.log(row)
+/*					findPoster(row.id)
+						.then( (rspta ) => {
+							respuesta.data.rows[ind].poster = rspta.data.rows
+						})
+						.catch((err) => console.log(err))
+			*/
+				}
+			})
+			req.respuesta = respuesta;
+		})
+		.then((respuesta) => {
+			next()
 		})
 		.catch( (err) => {
 			res.status(err.status).send(err);

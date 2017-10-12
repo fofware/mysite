@@ -18,6 +18,7 @@ class table {
 	}
 	makeQry(obj = {}){
 		let strQry = `SELECT * FROM \`${this.table}\``
+		if (obj.from) strQry = `SELECT * FROM ${obj.from}`;
 		if(obj.join || this.join) strQry += ` ${obj.join || this.join}`
 		if(obj.columns) strQry = strQry.replace("*",obj.columns);
 		if(obj.where) strQry += ` WHERE ${obj.where}`;
@@ -61,6 +62,7 @@ class table {
 			.catch(reject)
 		})
 	}
+	/*
 	qryCount(params={}){
 		return new Promise ((resolve,reject) => {
 			this.countRows()
@@ -84,9 +86,10 @@ class table {
 				.catch(reject)
 		})
 	}
+	*/
 	qry(params={}){
 		const strSQL = this.makeQry(params);
-//		console.log(strSQL)
+		console.log(strSQL)
 		return new Promise ((resolve,reject) => {
 			this.countRows(strSQL)
 				.then( ( countObj ) => {
@@ -114,7 +117,9 @@ class table {
 									data.rowsShow = data.rows.length
 								}
 								data.tableRowsCount = countObj.tableRows.count
-								let last = parseInt(countObj.tableRows.count / data.rowsByPage)
+								let addpage = 0
+								if((countObj.tableRows.count % data.rowsByPage) > 0) addpage = 1;
+								let last = parseInt(countObj.tableRows.count / data.rowsByPage)+addpage
 								if(data.page < last){
 									data.lastPage = last;
 									data.nextPage = data.page + 1
@@ -128,8 +133,6 @@ class table {
 					})
 				})
 			.catch((err) => {
-				console.error("error al conectar la base de datos")
-				console.log(err)
 				reject(err)
 			})
 		})
@@ -139,50 +142,4 @@ class table {
 		
 	}
 }
-/*
-function buildQry(params){
-	let strQry = `SELECT * FROM \`${params.table}\``
-	if(params.columns) strQry = strQry.replace("*",params.columns);
-	if(params.where) strQry += ` WHERE ${params.where}`;
-	if(params.order) strQry += ` ORDER BY ${params.order}`;
-	if(params.limit) strQry += ` LIMIT ${params.limit}`;
-	return strQry;
-}
-function connect() {
-	return new Promise( (resolve, reject) => {
-		db.getConnection( (err, connection) => {
-			if ( err )
-				reject({ status:100, message:`Connect Error: ${err.code}`,data:err});
-			resolve(connection)
-		});
-	});
-}
-function qry(params){
-	console.log(params)
-	let strSQL = buildQry(params);
-	console.log(strSQL)
-	return new Promise ((resolve,reject) => {
-		connect()
-		.then( (con) => {
-			con.query(strSQL, (error, results, fields) => {
-				con.release();
-				if(error) reject({ status:500, message:`Query Error: ${error.sqlMessage}`,data:error});
-				if(!results) reject({ status:404, message: `No se encontraron resultados para el\nQuery: ${strSQL}`})
-				const data = JSON.parse(JSON.stringify(results));
-				resolve({status: 200, message:"Query Exitoso", data: data })
-			});
-		})
-		.catch( (err) => {
-			reject(err)
-		} )
-	})
-}
-function list(params) {
-	return qry(buildQry);
-}
-function get(table, id, id_name ='id') {
-	let strQry = `SELECT * FROM \`${table}\` WHERE \`${id_name}\`='${id}'`
-	return qry(strQry);
-}
-*/
 module.exports = table

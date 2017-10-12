@@ -25,7 +25,7 @@
 							<div align="center" class="embed-responsive embed-responsive-{{row.responsiveRatio}}">
 								<a href='/mediadata{{row.data}}'>
 								{{#if row.poster}}
-								<img class='img-responsive' src="/mediadata{{row.poster.[0].data}}" alt="{{row.titulo}}" >
+								<img class='img-responsive' src="/mediadata{{row.poster}}" alt="{{row.titulo}}" >
 								{{ else }}
 								<video class="embed-responsive-item" controls preload="none">
   								<source src="/mediadata{{row.data}}" type="{{row.type}}">
