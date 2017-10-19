@@ -1,8 +1,11 @@
-'use strict'
-
+const extend 				= require('extend')
 const tokenServive = require('../service/token');
 
 function isAuth ( req, res, next ) {
+	//if(!req.mydata) req.mydata = {};
+	const user = {name:'pepe'}
+	req.mydata = extend(true,{},req.mydata,{user})
+	console.log(req.mydata)
 	console.log("Pasa por auth");
 	next();
 /*

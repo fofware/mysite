@@ -3,14 +3,22 @@ const express 		= require('express');
 const hbs				 	= require('express-handlebars');
 const bodyParser	= require('body-parser');
 const path 				= require('path');
-const app						= express();
+const morgan			= require('morgan');
+const allowCrossOrigin = require('./middlewares/cors');
 
+const app					= express();
+
+
+app.use(morgan('dev'));
+app.use(allowCrossOrigin);
 //
 // locales
 //
 //require('express-router')('thisismynewroutesfolder', app); + index.txt en esa ruta
 // despues de crear app
 //
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 
 const route					= require('./routes');
 
@@ -27,7 +35,5 @@ app.set('view engine', 'hbs');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'dist')));
 
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
 
 module.exports = app;

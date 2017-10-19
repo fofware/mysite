@@ -20,11 +20,12 @@ function getFiles(dir, reqFiles = [], base = ""){
 	fs.readdirSync(dir).forEach(function(file){
 			let subpath = dir +'/'+ file;
 			if(fs.lstatSync(subpath).isDirectory()){
-					getFiles(subpath, reqFiles, `${base}/${file}/`);
+				console.log(subpath, `${base}/${file}`)
+					getFiles(subpath, reqFiles, `${base}/${file}`);
 			} else {
 				if (file !== 'index.js'){
 					const fileName = path.basename(file, '.js');
-					reqFiles.push(base + fileName);
+					reqFiles.push(base + '/' +fileName);
 				}
 			}
 	});

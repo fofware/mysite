@@ -1,9 +1,7 @@
-'use strict'
-
+const extend = require('extend')
 const table = require('../helpers/db')
 const media = new table({table:'media'});
 const poster = new table({table:'poster'})
-//media.join = "LEFT JOIN `poster` ON (`media`.`id`=`poster`.`to`)"
 const fields =`
 "id",
 "date",
@@ -36,15 +34,18 @@ const fields =`
 function get( req, res, next ) {
 	media.qry({where:`\`id\`=${req.params.id}`})
 		.then( (respuesta) => {
-			res.status(respuesta.status).send(respuesta);
+			req.mydata = extend(true,{}, req.mydata, {respuesta});
+			next()
 		})
 		.catch( (err) => {
 			res.status(err.status).send(err);
 		})
 }
-function insert( req, res, next ) {
-	
-};
+
+function add( req, res, next ) {};
+
+function update( req, res, next ) {};
+
 function del( req, res, next ) {
 	media.del({where:`\`id\`=${req.params.id}`})
 	.then( (respuesta) => {
@@ -54,22 +55,17 @@ function del( req, res, next ) {
 		res.status(err.status).send(err);
 	})
 };
-function update( req, res, next ) {};
 //
-function findPoster(id) {
-	return poster.qry({where:`\`to\`=${id}`})
-}
 function list ( req, res, next ) {
 	const obj = {
-		columns:"ps.data as poster, c.*",
-		from: "(SELECT * from media where not EXISTS (select * from `poster` where `poster`.`mediaid`=`media`.`id`)) c",
-		join: "LEFT JOIN poster AS ps ON (ps.order = 0 and ps.to=c.id)",
+//		columns:"ps.data as poster, c.*",
+		from: "(SELECT * from media where not EXISTS (select `poster`.`mediaid` from `poster` where `poster`.`mediaid`=`media`.`id`)) c",
+//		join: "LEFT JOIN poster AS ps ON (ps.order = 0 and ps.to=c.id)",
 		rows:(req.params.rows || media.rows),
 		page:(req.params.page || media.page)
 	}
-//	media.qry({ where: "not EXISTS (select * from `poster` where `poster`.`mediaid`=`media`.`id`)", rows:(req.params.rows || media.rows),page:(req.params.page || media.page)})
 	media.qry(obj)
-	.then( (respuesta) => {
+		.then( (respuesta) => {
 			respuesta.data.rows.map((row, ind) =>{
 //				console.log(row)
 				let tp = row.type.split('/')
@@ -82,23 +78,39 @@ function list ( req, res, next ) {
 				} else {
 					respuesta.data.rows[ind][tp[0]] = 1;
 				}
-				if( respuesta.data.rows[ind].video || respuesta.data.rows[ind].audio ){
-					console.log(row)
-/*					findPoster(row.id)
-						.then( (rspta ) => {
-							respuesta.data.rows[ind].poster = rspta.data.rows
+
+			})
+			req.mydata = extend(true,{}, req.mydata, {respuesta});
+			return new Promise((res,reject) => {
+				let sequence = Promise.resolve();
+				respuesta.data.rows.map((row, ind) =>{
+					if (row.video || row.audio){
+						const postObj = {
+							columns: 'IF(`ps`.`data` IS NULL, `md`.`data`, `ps`.`data`) as data',
+							from: "`poster` as `ps`",
+							join: "LEFT JOIN `media` AS `md` ON( `md`.`id` = `ps`.`mediaid`)",
+							where: `\`ps\`.\`to\`='${row.id}'`
+						}
+						sequence = sequence.then( () => {
+							return poster.qry(postObj)
+						})
+						.then((posterData) =>{
+							console.log(posterData.data.rows)
+							req.mydata.respuesta.data.rows[ind].posters = posterData.data.rows;
 						})
 						.catch((err) => console.log(err))
-			*/
-				}
-			})
-			req.respuesta = respuesta;
+					}
+				})
+				res(sequence);
+				reject({ status:500, message:`Poster Error`});
+			});
 		})
-		.then((respuesta) => {
+		.then ((respuesta) => {
+			console.log(req.mydata);
 			next()
 		})
-		.catch( (err) => {
-			res.status(err.status).send(err);
+		.catch( (respuesta) => {
+			req.mydata = extend(true,{}, req.mydata, {respuesta});
 		})
 };
 /*******************************************************************/
@@ -136,32 +148,6 @@ function user ( req, res, next ){
 			res.status(err.status).send(err);
 		})
 }
-/*
-function listpage ( req, res, next ) {
-//	media.rows = req.params.rows;
-//	media.page = req.params.page;
-//	artMedia.qry({rows:req.params.rows,page:req.params.page})
-const columns = "`id`,`date`,`categoria`,`name`,`type`,`size`,`width`,`height`,`duration`,`description`,`tags`,`idioma`,`clave`,`srcType`,`srcData`,`owner`,`group`,`adult`,`private`,`userid`,`username`";
-media.qryCount({rows:req.params.rows,page:req.params.page})
-		.then( (respuesta) => {
-				respuesta.data.rows.map((row, index) =>{
-					if(row.type.indexOf('image')>-1)
-						respuesta.data.rows[index].image = 1;
-					else
-						if(row.type.indexOf('youtube')>0)
-							respuesta.data.rows[index].youtube = 1;
-						else
-							respuesta.data.rows[index].video = 1;
-				} );
-				req.respuesta = respuesta;
-				next()
-//				res.status(respuesta.status).send(respuesta);
-		})
-		.catch( (err) => {
-			res.status(err.status).send(err);
-		})
-};
-*/
 function video_list(rows, page=0) {
 	return media.qry({rows,page,where:"`type` LIKE 'video%'"});
 }
@@ -169,10 +155,10 @@ function image_list(rows,page=1) {
 	return media.qry({rows,page,where:"`type` LIKE 'image%'"});
 }
 module.exports = {
-	get
-	,insert
-	,del
+	add
 	,update
+	,del
+	,get
 	,list
 	,user
 	,video_list
