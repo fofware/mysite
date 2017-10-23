@@ -2,10 +2,6 @@
 	<h2>Media</h2>
 	<div>Showing {{respuesta.data.rowsShow}} registers by page of {{respuesta.data.tableRowsCount}} registers</div>
 	<div>Current Page {{respuesta.data.page}}	of {{respuesta.data.totalPage}} </div>
-	<h2>{{user.name}}</h2>
-	{{#if user.name}}
-	<h2>{{user.name}}</h2>
-	{{/if}}
 </div>
 <div class="row">
 {{#each respuesta.data.rows as |row ind|}}

@@ -5,6 +5,22 @@ const toGrid			= require('../../../helpers/datatogrid');
 
 const posterRoute	= express.Router();
 
+posterRoute.param('page', (req, res, next, page) => {
+	console.log('Recibio page: ', page);
+	if (parseInt(page,10) < 1) page = 1;
+	if (!req.params) req.params = {};
+	req.params.page = page;
+	next();
+})
+
+posterRoute.param('to', (req, res, next, to) => {
+	console.log('Recibio to: ', to);
+	to = parseInt(to,10);
+	if ( to < 1) page = 1;
+	if (!req.params) req.params = {};
+	req.params.to = to;
+	next();
+})
 
 //http://172.31.2.2:8088/api/v1/poster/jqgrid/page/1?_search=false&nd=1508358091472&rows=10&page=1&sidx=id&sord=desc
 //let cols = ['id','to','order','mediaid','name','type','size','width','height','data_type','data','userid','username','time'];

@@ -9,7 +9,7 @@ const allowCrossOrigin = require('./middlewares/cors');
 const app					= express();
 
 
-app.use(morgan('dev'));
+//app.use(morgan('dev'));
 app.use(allowCrossOrigin);
 //
 // locales
@@ -17,8 +17,8 @@ app.use(allowCrossOrigin);
 //require('express-router')('thisismynewroutesfolder', app); + index.txt en esa ruta
 // despues de crear app
 //
-app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 const route					= require('./routes');
 
@@ -34,6 +34,5 @@ app.set('view engine', 'hbs');
 // Set Static Folder
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'dist')));
-
 
 module.exports = app;

@@ -1,3 +1,4 @@
+'use strict';
 const extend = require('extend')
 const table = require('../helpers/db')
 const media = new table({table:'media'});
