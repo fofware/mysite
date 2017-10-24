@@ -23,12 +23,20 @@
 						{{/if}}
 						{{#if row.video}}
 							<div align="center" class="embed-responsive embed-responsive-{{row.responsiveRatio}}">
-								<a href='/mediadata{{row.data}}'>
+								{{#if row.file}}
+									<a href='/mediadata{{row.data}}'>
+								{{else}}
+									<a href='{{row.data}}'>
+								{{/if}}
 								{{#if row.posters.[0].data}}
-								<img class='img-responsive' src="/mediadata{{row.posters.[0].data}}" alt="{{row.titulo}}" >
+									<img class='img-responsive' src="/mediadata{{row.posters.[0].data}}" alt="{{row.titulo}}" >
 								{{ else }}
 								<video class="embed-responsive-item" controls preload="none">
-  								<source src="/mediadata{{row.data}}" type="{{row.type}}">
+									{{#if row.file}}
+  									<source src="/mediadata{{row.data}}" type="{{row.type}}">
+									{{else}}
+  									<source src="{{row.data}}" type="{{row.type}}">
+									{{/if}}
 								</video>
 								{{/if}}
 								</a>

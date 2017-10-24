@@ -60,7 +60,8 @@ function del( req, res, next ) {
 function list ( req, res, next ) {
 	const obj = {
 //		columns:"ps.data as poster, c.*",
-		from: "(SELECT * from media where not EXISTS (select `poster`.`mediaid` from `poster` where `poster`.`mediaid`=`media`.`id`)) c",
+			from: "(SELECT * from media where not EXISTS (select `poster`.`mediaid` from `poster` where `poster`.`mediaid`=`media`.`id`)) c",
+//			from: "(SELECT * from `media` as `md` WHERE NOT EXISTS (SELECT `mediaposter`.`media_id` FROM `mediaposter` WHERE `mediaposter`.`id_data`=`md`.`id`)) c",
 //		join: "LEFT JOIN poster AS ps ON (ps.order = 0 and ps.to=c.id)",
 		rows:(req.params.rows || media.rows),
 		page:(req.params.page || media.page)
@@ -79,18 +80,26 @@ function list ( req, res, next ) {
 				} else {
 					respuesta.data.rows[ind][tp[0]] = 1;
 				}
-
+				respuesta.data.rows[ind][row.data_type] = 1;
 			})
 			req.mydata = extend(true,{}, req.mydata, {respuesta});
 			return new Promise((res,reject) => {
 				let sequence = Promise.resolve();
 				respuesta.data.rows.map((row, ind) =>{
 					if (row.video || row.audio){
+/*
 						const postObj = {
 							columns: 'IF(`ps`.`data` IS NULL, `md`.`data`, `ps`.`data`) as data',
 							from: "`poster` as `ps`",
 							join: "LEFT JOIN `media` AS `md` ON( `md`.`id` = `ps`.`mediaid`)",
 							where: `\`ps\`.\`to\`='${row.id}'`
+						}
+*/
+						const postObj = {
+							columns: 'data',
+							from: "`mediaposter` as `ps`",
+//							join: "LEFT JOIN `media` AS `md` ON( `md`.`id` = `ps`.`media_id`)",
+							where: `\`ps\`.\`media_id\`='${row.id}'`
 						}
 						sequence = sequence.then( () => {
 							return poster.qry(postObj)
